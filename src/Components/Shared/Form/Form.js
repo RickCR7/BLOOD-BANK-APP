@@ -1,5 +1,7 @@
 import React,{useState} from 'react';
 import InputType from "./InputType";
+import {Link} from "react-router-dom";
+import { handleLogin, handleRegister } from '../../../Services/authService';
 
 const Form = ({formType,submitBtn,formTitle}) => {
     const [email,setEmail] = useState("");
@@ -12,7 +14,13 @@ const Form = ({formType,submitBtn,formTitle}) => {
     const [phone,setPhone] = useState("");
   return (
     <>
-      <form >
+      <form onSubmit={(e)=>{
+        if(formType==="login"){
+          return handleLogin(e,email,password,role)
+        } else if(formType==="register"){
+          return handleRegister(e,name,role,email,password,organisationName,hospitalName,address,phone);
+        }
+      }}>
         <h1 className='text-center'>{formTitle}</h1>
         <hr />
         <div className="d-flex mb-3">
@@ -20,10 +28,10 @@ const Form = ({formType,submitBtn,formTitle}) => {
             <input type="radio" className="form-check-input" name="role" id ="donorradio" value={"donor"} onChange={(e)=>setRole(e.target.value)}  />
             <label htmlFor="donorRadio" className='form-check-label'>Donor</label>
           </div>
-          <div className="form-check">
+          {/* <div className="form-check">
             <input type="radio" className="form-check-input ms-2" name="role" id ="adminradio" value={"admin"} onChange={(e)=>setRole(e.target.value)}  />
             <label htmlFor="donorRadio" className='form-check-label'>Admin</label>
-          </div>
+          </div> */}
           <div className="form-check">
             <input type="radio" className="form-check-input ms-2" name="role" id ="hospitalradio" value={"hospital"} onChange={(e)=>setRole(e.target.value)}  />
             <label htmlFor="donorRadio" className='form-check-label'>Hospital</label>
@@ -78,7 +86,7 @@ const Form = ({formType,submitBtn,formTitle}) => {
               value={password}
               onChange={(evt) => setPassword(evt.target.value)}
           />
-          {(role === "admin" || role === "donor") && (
+          {(role === "donor") && (
             <InputType 
             labelText={"Name"} 
             labelFor={"forName"} 
@@ -131,7 +139,16 @@ const Form = ({formType,submitBtn,formTitle}) => {
           }
         })()}
 
-        <div className="d-flex">
+        <div className="d-flex flex-row justify-content-between">
+          {formType === "login" ? (
+            <p>Not registered yet ? Register
+              <Link to="/register"> Here!</Link>
+            </p>
+            ) : (
+            <p>Already an user.Please
+              <Link to="/login"> Login !</Link>
+            </p>
+            )}
             <button className='btn btn-primary' type='submit'>
                 {submitBtn}
             </button>
